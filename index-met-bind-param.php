@@ -38,8 +38,16 @@
 
             try {
 
-                $sql = "INSERT INTO users (firstname, lastname, email) VALUES ('$firstname', '$lastname', '$email')";
-                $conn->exec($sql);
+                #$sql = "INSERT INTO users (firstname, lastname, email) VALUES ('$firstname', '$lastname', '$email')";
+                $sql = "INSERT INTO users (firstname, lastname, email) VALUES (:firstname, :lastname, :email)";
+
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':firstname', $firstname);
+                $stmt->bindParam(':lastname', $lastname);
+                $stmt->bindParam(':email', $email);
+
+                $stmt->execute();
+
                 echo "<p>New record created successfully</p>";
             } catch (PDOException $e) {
                 echo $sql . "<br>" . $e->getMessage();
@@ -63,11 +71,15 @@
 
         try {
 
-            $sql = "SELECT * FROM users WHERE id = " . $_GET['details'];
+            #$sql = "SELECT * FROM users WHERE id = " . $_GET['details'];
+            $sql = "SELECT * FROM users WHERE id = :id";
             echo "<pre>";
             echo $sql;
             echo "</pre>";
+
+
             $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id', $_GET['details']);
             $stmt->execute();
 
             // set the resulting array to associative
